@@ -2,7 +2,7 @@ import React from 'react';
 import { Player } from '../../board/board-status';
 import MainBoard from '../../board/main-board';
 
-export default function Offline() {
+export default function OfflineGame() {
   const vals: number[][] = [];
   for (let i = 0; i < 9; i++) {
     // vals.push([...Array(9)].map(() => Math.floor(Math.random()*3)));
