@@ -57,7 +57,7 @@ export default function MainBoard({ player, turn, lastMoveIndex, gameState, upda
 
     return (
         <div className='main-board'>
-            { getBoardStatus(blocks) === Player.NONE ? `Turn: ${player}` : `Winner: ${getBoardStatus(blocks)}` }
+            { getBoardStatus(blocks) === Player.NONE ? `Turn: ${turn}` : `Winner: ${getBoardStatus(blocks)}` }
             <BaseBoard items={blocks} highlighted={false} />
         </div>
     );
