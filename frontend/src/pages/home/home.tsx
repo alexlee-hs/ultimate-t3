@@ -12,9 +12,16 @@ export default function Home() {
         <div>
             <h1>ULTIMATE TICTACTOE</h1>
             
-            <button className='bg-black border-2 rounded-lg p-5 my-5' onClick={() => navigate('/offline')}>
-                Offline 1v1
-            </button>
+            <div>
+                <button className='bg-black border-2 rounded-lg p-5 my-5 w-64' onClick={() => navigate('/offline')}>
+                    Offline 1v1
+                </button>
+            </div>
+            <div>
+                <button className='bg-black border-2 rounded-lg p-5 my-5 w-64' onClick={() => navigate('/cpu')}>
+                    VS CPU
+                </button>
+            </div>
         </div>
     );
 }

@@ -2,12 +2,14 @@ import { BaseBoardItem } from './base-board-item';
 import React from 'react';
 import { getBoardStatus } from './util';
 import { Player } from './board-status';
+import clsx from 'clsx';
 
 interface BaseBoardProps {
     items: BaseBoardItem[];
+    highlighted: boolean;
 }
 
-export default function BaseBoard({ items }: BaseBoardProps) {
+export default function BaseBoard({ items, highlighted }: BaseBoardProps) {
     if (items.length !== 9) {
         return <div></div>;
     }
@@ -15,7 +17,10 @@ export default function BaseBoard({ items }: BaseBoardProps) {
     const winner = getBoardStatus(items);
 
     return (
-        <div className='base-board relative border-solid border-2 divide-white cursor-default'>
+        <div className={clsx(
+            'base-board relative border-solid border-2 divide-white cursor-default',
+            highlighted ? 'bg-slate-700' : ''
+        )}>
             {
                 [0, 1, 2].map(i => {
                     return (<div key={`row_${i}`} className='flex flex-row'>

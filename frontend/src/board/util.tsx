@@ -2,13 +2,17 @@ import { BaseBoardItem } from './base-board-item';
 import { Player, WinCombinations } from './board-status';
 
 export function getBoardStatus(items: BaseBoardItem[]): Player {
+    return getWinner(items.map(item => item.getValue()));
+}
+
+export function getWinner(items: Player[]): Player {
     const finished = WinCombinations.find(combination => {
-        return matches(combination.map(ind => items[ind].getValue()));
+        return matches(combination.map(ind => items[ind]));
     });
     if (finished === undefined) {
         return Player.NONE;
     }
-    return items[finished[0]].getValue();
+    return items[finished[0]];
 }
 
 function matches(arr: Player[]) {

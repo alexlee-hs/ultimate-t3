@@ -1,6 +1,7 @@
 import React from 'react';
 import { Player } from '../../board/board-status';
 import MainBoard from '../../board/main-board';
+import { getWinner } from '../../board/util';
 
 export default function CpuGame() {
   const vals: number[][] = [];
@@ -28,9 +29,31 @@ export default function CpuGame() {
   const [lastMoveIndex, setLastMoveIndex] = React.useState<number>(-1);
 
   function updateGameState(newState: Player[][], index: number) {
-    setPlayer(player === Player.O ? Player.X : Player.O);
-    setLastMoveIndex(index);
+    // have CPU make move
+    const randomMoveIndex = makeNextRandomMove(newState, index);
+
+    setLastMoveIndex(randomMoveIndex);
     setGameState(newState);
+  }
+
+  function makeNextRandomMove(newState: Player[][], blockIndex: number): number {
+    let block: Player[] = newState[blockIndex];
+
+    if (getWinner(block) !== Player.NONE) {
+      const possibleBlocks = newState.filter(b => getWinner(b) === Player.NONE);
+      block = chooseRandom(possibleBlocks);
+    }
+
+    const possible = block
+      .map((val, index) => val === Player.NONE ? index : undefined)
+      .filter(val => val !== undefined);
+    const selected = chooseRandom(possible)!;
+    block[selected] = Player.X;
+    return selected;
+  }
+
+  function chooseRandom<T>(arr: T[]): T {
+    return arr[Math.floor(Math.random()*arr.length)];
   }
 
   return (<MainBoard

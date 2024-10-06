@@ -24,19 +24,25 @@ export default function MainBoard({ player, turn, lastMoveIndex, gameState, upda
             });
         };
         return {
-            render: () => <BaseBoard items={blockItems}/>,
+            render: () => <BaseBoard items={blockItems} highlighted={ isBlockValid(blockIndex) }/>,
             getValue: () => getBoardStatus(blockItems),
         };
+    }
+
+    function isBlockValid(blockIndex: number) {
+        return (blockIndex === lastMoveIndex
+                || lastMoveIndex === - 1
+                || blocks[lastMoveIndex].getValue() !== Player.NONE
+            )
+            && blocks[blockIndex].getValue() === Player.NONE
+            && getBoardStatus(blocks) === Player.NONE;
     }
 
     function onClickItem(blockIndex: number, index: number): void {
         if (player !== turn || gameState[blockIndex][index] !== Player.NONE) {
             return;
         }
-        if (lastMoveIndex > 0 && lastMoveIndex !== blockIndex && blocks[lastMoveIndex].getValue() === Player.NONE) {
-            return;
-        }
-        if (blocks[blockIndex].getValue() !== Player.NONE) {
+        if (!isBlockValid(blockIndex)) {
             return;
         }
         gameState[blockIndex][index] = player;
@@ -52,7 +58,7 @@ export default function MainBoard({ player, turn, lastMoveIndex, gameState, upda
     return (
         <div className='main-board'>
             Turn: {player}
-            <BaseBoard items={blocks} />
+            <BaseBoard items={blocks} highlighted={false} />
         </div>
     );
 }
