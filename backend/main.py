@@ -1,12 +1,16 @@
 from uuid import UUID
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Response, WebSocket, WebSocketDisconnect
 import json
 
-from backend.connect_manager import ConnectionManager
+from .connect_manager import ConnectionManager
 
 app = FastAPI()
 
 manager = ConnectionManager()
+
+@app.get("/health")
+async def healthCheck():
+    return Response(status_code= 200)
 
 @app.websocket("/ws")
 async def connection(websocket: WebSocket):
@@ -22,3 +26,8 @@ async def connection(websocket: WebSocket):
     except WebSocketDisconnect:
         if gameUUID is not None:
             manager.endGame(gameUUID)
+    except Exception as e:
+        print('error ocurred')
+        print(e)
+
+print('uppp')

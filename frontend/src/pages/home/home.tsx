@@ -22,6 +22,11 @@ export default function Home() {
                     VS CPU
                 </button>
             </div>
+            <div>
+                <button className='bg-black border-2 rounded-lg p-5 my-5 w-64' onClick={() => navigate('/online')}>
+                    Online
+                </button>
+            </div>
         </div>
     );
 }

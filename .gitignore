@@ -9,3 +9,6 @@
 
 # production
 /frontend/build
+
+# cache
+/backend/__pycache__

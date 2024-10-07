@@ -1,7 +1,7 @@
 from uuid import UUID, uuid4
 from fastapi import WebSocket
 import json
-from backend.models import ActiveGameModel, ClientModel
+from .models import ActiveGameModel, ClientModel
 
 class ConnectionManager:
     def __init__(self):
@@ -12,6 +12,7 @@ class ConnectionManager:
         await websocket.accept()
         client_model = ClientModel(websocket, uuid4())
         self.random_queue.append(client_model)
+        print('User created ' + client_model.uuid.__str__() + '\n')
         if len(self.random_queue) > 1:
             self.createGame(self.random_queue.pop(), self.random_queue.pop())
         return client_model.uuid
@@ -23,6 +24,7 @@ class ConnectionManager:
                 uuid4()
             )
         self.active_game_map[new_game.uuid] = new_game
+        print('Game created' + new_game.uuid.__str__() + '\n' + player1.uuid.__str__() + '\n' + player2.uuid.__str__() + '\n')
 
     def endGame(self, gameUUID: UUID):
         self.active_game_map.pop(gameUUID)

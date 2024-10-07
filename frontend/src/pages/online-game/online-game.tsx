@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react'
 // post-match game display
 
 // 'updateGameState' sends payload to server
@@ -6,3 +7,13 @@
 // pass in websocket connection from matching?
 
 // TODO
+export default function OnlineGame() {
+    useEffect(() => {
+        const websocket = new WebSocket('ws://localhost:8000/ws');
+        websocket.onopen = () => {
+            console.log('open socket');
+        };
+    }, [])
+
+    return (<div></div>);
+}
