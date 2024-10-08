@@ -6,7 +6,6 @@ import React, { useEffect } from 'react'
 
 // pass in websocket connection from matching?
 
-// TODO
 export default function OnlineGame() {
     useEffect(() => {
         const websocket = new WebSocket('ws://localhost:8000/ws');

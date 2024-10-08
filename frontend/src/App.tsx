@@ -4,7 +4,7 @@ import { MemoryRouter, Routes, Route } from "react-router";
 import OfflineGame from "./pages/offline-game/offline-game";
 import Home from "./pages/home/home";
 import CpuGame from "./pages/cpu-game/cpu-game";
-import OnlineGame from "./pages/online-game/online-game";
+import RandomMatching from "./pages/online-game/matching/random-matching";
 
 export default function App() {
   return (
@@ -13,7 +13,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/offline" element={<OfflineGame />} />
-          <Route path="/online" element={<OnlineGame />} />
+          <Route path="/online/random" element={<RandomMatching />} />
           <Route path="/cpu" element={<CpuGame />} />
         </Routes>
       </MemoryRouter>

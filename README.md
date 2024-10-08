@@ -8,4 +8,4 @@ npm start
 
 How to run backend:
 
-uvicorn backend/main:app
+uvicorn backend.main:app

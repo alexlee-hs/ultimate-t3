@@ -1,6 +1,5 @@
 from uuid import UUID, uuid4
 from fastapi import WebSocket
-import json
 from .models import ActiveGameModel, ClientModel
 
 class ConnectionManager:
@@ -10,30 +9,39 @@ class ConnectionManager:
 
     async def connect(self, websocket: WebSocket) -> UUID:
         await websocket.accept()
-        client_model = ClientModel(websocket, uuid4())
+        client_model = ClientModel(websocket, str(uuid4()))
         self.random_queue.append(client_model)
         print('User created ' + client_model.uuid.__str__() + '\n')
         if len(self.random_queue) > 1:
-            self.createGame(self.random_queue.pop(), self.random_queue.pop())
+            await self.createGame(self.random_queue.pop(), self.random_queue.pop())
         return client_model.uuid
 
-    def createGame(self, player1: ClientModel, player2: ClientModel):
+    async def createGame(self, playerO: ClientModel, playerX: ClientModel):
         new_game = ActiveGameModel(
-                player1,
-                player2,
-                uuid4()
+                playerO,
+                playerX,
+                str(uuid4())
             )
         self.active_game_map[new_game.uuid] = new_game
-        print('Game created' + new_game.uuid.__str__() + '\n' + player1.uuid.__str__() + '\n' + player2.uuid.__str__() + '\n')
+        print('Game created' + new_game.uuid.__str__() + '\n' + playerO.uuid.__str__() + '\n' + playerX.uuid.__str__() + '\n')
+        await self.sendGameInfo(new_game.uuid)
 
     def endGame(self, gameUUID: UUID):
         self.active_game_map.pop(gameUUID)
 
-    async def sendGameState(self, message: json, gameUUID: UUID):
+    async def sendGameInfo(self, gameUUID: str):
         game = self.active_game_map.get(gameUUID)
         if game is None:
             return
-        await game.player1.websocket.send_json(message)
-        await game.player2.websocket.send_json(message)
+        await game.playerO.websocket.send_json({ 'gameUUID': gameUUID, 'player': 'O' })
+        await game.playerX.websocket.send_json({ 'gameUUID': gameUUID, 'player': 'X' })
+
+    async def sendGameState(self, message: any, gameUUID: str):
+        game = self.active_game_map.get(gameUUID)
+        print('sending game state')
+        if game is None:
+            return
+        await game.playerO.websocket.send_json(message)
+        await game.playerX.websocket.send_json(message)
 
     

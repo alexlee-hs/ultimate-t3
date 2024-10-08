@@ -20,8 +20,9 @@ async def connection(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_json()
-            loadedData = json.loads(data)
-            gameUUID = loadedData['gameUUID']
+            print(data)
+            gameUUID = data['gameUUID']
+            print('sending gamestate for ${gameUUID}')
             await manager.sendGameState(data, gameUUID)
     except WebSocketDisconnect:
         if gameUUID is not None:
@@ -30,4 +31,4 @@ async def connection(websocket: WebSocket):
         print('error ocurred')
         print(e)
 
-print('uppp')
+print('up')
