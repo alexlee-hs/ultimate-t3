@@ -1,64 +1,45 @@
-import React from 'react';
-import BaseBoard from './base-board';
-import { BaseBoardItem } from './base-board-item';
-import BasicItem from './basic-item';
+import React, { useState } from 'react';
 import { Player } from './board-status';
-import { getBoardStatus } from './util';
+import { getWinner } from './util';
+import BigBoard from './big-board';
+
+export interface Move {
+    blockIndex: number,
+    cellIndex: number
+}
 
 interface MainBoardProp {
     player: Player;
     turn: Player;
     lastMoveIndex: number;
     gameState: Player[][];
-    updateGameState: (gameState: Player[][], index: number) => void;
+    makeMove: (move: Move) => void;
 }
 
-export default function MainBoard({ player, turn, lastMoveIndex, gameState, updateGameState }: MainBoardProp) {
+export default function MainBoard({player, turn, lastMoveIndex, gameState, makeMove: updateGameState }: MainBoardProp) {
+    const [blockState, setBlockState] = useState(gameState.map(block => getWinner(block)));
 
-    function getBlock(vals: Player[], blockIndex: number): BaseBoardItem {
-        const blockItems: BaseBoardItem[] = [];
-        for (let i= 0; i < 9; i++) {
-            blockItems.push({
-                render: () => BasicItem(vals[i], () => onClickItem(blockIndex, i)),
-                getValue: () => vals[i],
-            });
-        };
-        return {
-            render: () => <BaseBoard items={blockItems} highlighted={ isBlockValid(blockIndex) }/>,
-            getValue: () => getBoardStatus(blockItems),
-        };
-    }
+    const allowedBlocks = lastMoveIndex === -1 || getWinner(gameState[lastMoveIndex]) !== Player.NONE ? [...Array(9).keys()] : [lastMoveIndex];
 
-    function isBlockValid(blockIndex: number) {
-        return (blockIndex === lastMoveIndex
-                || lastMoveIndex === - 1
-                || blocks[lastMoveIndex].getValue() !== Player.NONE
-            )
-            && blocks[blockIndex].getValue() === Player.NONE
-            && getBoardStatus(blocks) === Player.NONE;
-    }
-
-    function onClickItem(blockIndex: number, index: number): void {
-        if (player !== turn || gameState[blockIndex][index] !== Player.NONE) {
+    function makeMove(move: Move): void {
+        if (player !== turn || !allowedBlocks.includes(move.blockIndex)) {
             return;
         }
-        if (!isBlockValid(blockIndex)) {
-            return;
+        updateGameState(move);
+        const winner = getWinner(gameState[move.blockIndex]);
+        if (winner !== Player.NONE) {
+            blockState[move.blockIndex] = winner;
+            setBlockState([...blockState]);
         }
-        gameState[blockIndex][index] = player;
-        updateGameState([...gameState], index);
     }
 
-    let blocks: BaseBoardItem[] = [];
-
-    for (let i = 0; i < 9; i++) {
-        blocks.push(getBlock(gameState[i], i));
-    };
+    const overallWinner = getWinner(blockState);
+    const gameEnd = overallWinner !== Player.NONE;
 
     return (
         <div className='main-board'>
-            { getBoardStatus(blocks) === Player.NONE ? `Turn: ${turn}` : `Winner: ${getBoardStatus(blocks)}` }
-            <BaseBoard items={blocks} highlighted={false} />
+            { !gameEnd ? `Turn: ${turn}` : `Winner: ${overallWinner}` }
+            <BigBoard matrix={gameState} allowedBlocks={gameEnd ? [] : allowedBlocks} makeMove={makeMove} />
         </div>
     );
 }

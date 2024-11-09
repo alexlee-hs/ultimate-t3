@@ -1,9 +1,4 @@
-import { BaseBoardItem } from './base-board-item';
 import { Player, WinCombinations } from './board-status';
-
-export function getBoardStatus(items: BaseBoardItem[]): Player {
-    return getWinner(items.map(item => item.getValue()));
-}
 
 export function getWinner(items: Player[]): Player {
     const finished = WinCombinations.find(combination => {

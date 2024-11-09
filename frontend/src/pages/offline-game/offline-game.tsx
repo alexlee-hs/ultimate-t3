@@ -1,6 +1,6 @@
 import React from 'react';
 import { Player } from '../../board/board-status';
-import MainBoard from '../../board/main-board';
+import MainBoard, { Move } from '../../board/main-board';
 
 export default function OfflineGame() {
   const vals: number[][] = [];
@@ -27,10 +27,11 @@ export default function OfflineGame() {
   const [player, setPlayer] = React.useState<Player>(Player.O);
   const [lastMoveIndex, setLastMoveIndex] = React.useState<number>(-1);
 
-  function updateGameState(newState: Player[][], index: number) {
+  function updateGameState(move: Move) {
+    gameState[move.blockIndex][move.cellIndex] = player;
     setPlayer(player === Player.O ? Player.X : Player.O);
-    setLastMoveIndex(index);
-    setGameState(newState);
+    setLastMoveIndex(move.cellIndex);
+    setGameState(gameState);
   }
 
   return (<MainBoard
@@ -38,6 +39,6 @@ export default function OfflineGame() {
     turn={player}
     lastMoveIndex={lastMoveIndex}
     gameState={gameState}
-    updateGameState={(gameState, index) => updateGameState(gameState, index)}
+    makeMove={(move) => updateGameState(move)}
   />);
 }

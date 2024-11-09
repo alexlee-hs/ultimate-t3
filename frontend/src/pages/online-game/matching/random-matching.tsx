@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import OnlineGame from '../online-game';
 import { Player } from '../../../board/board-status';
-import MainBoard from '../../../board/main-board';
+import MainBoard, { Move } from '../../../board/main-board';
 // post-match game display
 
 // 'updateGameState' sends payload to server
@@ -61,8 +61,9 @@ export default function RandomMatching() {
         }
     }
     
-    function sendGameState(gameState: Player[][], index: number) {
-        websocket.send(JSON.stringify({ 'gameUUID': gameUUID, 'gameState': gameState, 'index': index }));
+    function sendGameState(move: Move) {
+        gameState[move.blockIndex][move.cellIndex] = player;
+        websocket.send(JSON.stringify({ 'gameUUID': gameUUID, 'gameState': gameState, 'index': move.cellIndex }));
     }
 
     return (<div>
@@ -73,7 +74,7 @@ export default function RandomMatching() {
             gameUUID !== null && <h1>You are {player}</h1>
         }
         {
-            gameUUID !== null && <MainBoard player={player} turn={turn} gameState={gameState} updateGameState={sendGameState} lastMoveIndex={lastMoveIndex} />
+            gameUUID !== null && <MainBoard player={player} turn={turn} gameState={gameState} makeMove={sendGameState} lastMoveIndex={lastMoveIndex} />
         }
 
     </div>);

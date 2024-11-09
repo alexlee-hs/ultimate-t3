@@ -1,25 +1,23 @@
-import { BaseBoardItem } from './base-board-item';
+import clsx from "clsx";
+import { Player } from "./board-status";
 import React from 'react';
-import { getBoardStatus } from './util';
-import { Player } from './board-status';
-import clsx from 'clsx';
+import BasicItem from "./basic-item";
+import { getWinner } from "./util";
 
-interface BaseBoardProps {
-    items: BaseBoardItem[];
-    highlighted: boolean;
-}
+interface SmallBoardProps {
+    matrix: Player[],
+    allowed: boolean,
+    makeMove: (cellIndex: number) => void,
+};
 
-export default function BaseBoard({ items, highlighted }: BaseBoardProps) {
-    if (items.length !== 9) {
-        return <div></div>;
-    }
-
-    const winner = getBoardStatus(items);
-
+export default function SmallBoard({ matrix, allowed, makeMove }: SmallBoardProps) {
+    const winner = getWinner(matrix);
     return (
         <div className={clsx(
             'base-board relative border-solid border-2 divide-white cursor-default',
-            highlighted ? 'bg-slate-700' : ''
+            allowed && winner === Player.NONE ? 'bg-slate-700' : '',
+            winner === Player.O ? 'bg-green-600': '',
+            winner === Player.X ? 'bg-red-600': '',
         )}>
             {
                 [0, 1, 2].map(i => {
@@ -27,7 +25,11 @@ export default function BaseBoard({ items, highlighted }: BaseBoardProps) {
                         {[0, 1, 2].map(j => {
                             return (<div key={`col_${j}`}>
                                 {
-                                    items[j + 3*i].render()
+                                    <BasicItem val={matrix[j + 3*i]} clickListener={() => {
+                                        if (winner === Player.NONE && allowed) {
+                                            makeMove(j + 3*i);
+                                        }
+                                    }}/>
                                 }
                             </div>)
                         })}

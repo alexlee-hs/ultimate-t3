@@ -1,6 +1,6 @@
 import React from 'react';
 import { Player } from '../../board/board-status';
-import MainBoard from '../../board/main-board';
+import MainBoard, { Move } from '../../board/main-board';
 import { getWinner } from '../../board/util';
 
 export default function CpuGame() {
@@ -25,15 +25,16 @@ export default function CpuGame() {
   }
 
   const [gameState, setGameState] = React.useState<Player[][]>(convertToBoardStatusMatrix(vals));
-  const [player, setPlayer] = React.useState<Player>(Player.O);
+  const player = Player.O;
   const [lastMoveIndex, setLastMoveIndex] = React.useState<number>(-1);
 
-  function updateGameState(newState: Player[][], index: number) {
+  function updateGameState(move: Move) {
     // have CPU make move
-    const randomMoveIndex = makeNextRandomMove(newState, index);
+    gameState[move.blockIndex][move.cellIndex] = player;
+    const randomMoveIndex = makeNextRandomMove(gameState, move.cellIndex);
 
     setLastMoveIndex(randomMoveIndex);
-    setGameState(newState);
+    setGameState(gameState);
   }
 
   function makeNextRandomMove(newState: Player[][], blockIndex: number): number {
@@ -61,6 +62,6 @@ export default function CpuGame() {
     turn={player}
     lastMoveIndex={lastMoveIndex}
     gameState={gameState}
-    updateGameState={(gameState, index) => updateGameState(gameState, index)}
+    makeMove={(move) => updateGameState(move)}
   />);
 }
